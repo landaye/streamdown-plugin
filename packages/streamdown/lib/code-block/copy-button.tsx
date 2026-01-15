@@ -74,7 +74,7 @@ export const CodeBlockCopyButton = ({
       type="button"
       {...props}
     >
-      {children ?? <Icon size={14} />}
+      {children ?? <Icon className="w-3.5 h-3.5" />}
     </button>
   );
 };

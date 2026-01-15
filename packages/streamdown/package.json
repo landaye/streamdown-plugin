@@ -1,5 +1,5 @@
 {
-  "name": "streamdown",
+  "name": "streamdown-plugin",
   "version": "2.0.1",
   "type": "module",
   "main": "./dist/index.js",
@@ -55,6 +55,8 @@
     "react": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
+    "@shikijs/engine-javascript": "^3.21.0",
+    "@shikijs/engine-oniguruma": "^3.21.0",
     "clsx": "^2.1.1",
     "esbuild": "^0.27.2",
     "hast-util-to-jsx-runtime": "^2.3.6",
@@ -71,7 +73,7 @@
     "remark-math": "^6.0.0",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
-    "remend": "workspace:*",
+    "remend": "^1.0.2",
     "shiki": "^3.19.0",
     "tailwind-merge": "^3.4.0",
     "unified": "^11.0.5",

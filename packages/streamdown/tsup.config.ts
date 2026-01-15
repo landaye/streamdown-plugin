@@ -11,4 +11,8 @@ export default defineConfig({
   treeshake: true,
   splitting: true,
   platform: "browser",
+  // 明确指定编码为UTF-8
+  esbuildOptions: (options) => {
+    options.charset = "utf8";
+  },
 });

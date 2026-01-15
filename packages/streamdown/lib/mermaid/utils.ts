@@ -3,7 +3,7 @@ import packageJson from "../../package.json";
 
 // Get mermaid version for CDN URL
 const MERMAID_VERSION = (
-  packageJson.dependencies?.mermaid ??
+  (packageJson.dependencies as any)?.mermaid ??
   packageJson.devDependencies?.mermaid ??
   "11"
 ).replace(/^\^/, "");
@@ -16,10 +16,8 @@ const getMermaidCdnUrl = (cdnBaseUrl: string) =>
 const mermaidModuleCache = new Map<string, typeof import("mermaid")>();
 
 // Dynamic import that bypasses bundler static analysis (works with Webpack, Turbopack, etc.)
-// Using Function constructor to create an indirect import that bundlers won't analyze
-const dynamicImport = new Function("url", "return import(url)") as (
-  url: string
-) => Promise<typeof import("mermaid")>;
+// Using direct dynamic import syntax that doesn't require unsafe-eval
+const dynamicImport = (url: string) => import(url) as Promise<typeof import("mermaid")>;
 
 export const initializeMermaid = async (
   customConfig?: MermaidConfig,

@@ -11,7 +11,8 @@ for (const file of files) {
   const content = readFileSync(filePath, "utf-8");
 
   if (!content.startsWith('"use client"')) {
-    writeFileSync(filePath, `"use client";\n${content}`, "utf-8");
+    writeFileSync(filePath, `"use client";
+${content}`, "utf-8");
     console.log(`Added "use client" to ${file}`);
   }
 }

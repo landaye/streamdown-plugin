@@ -5,7 +5,7 @@ import type {
   TokensResult,
 } from "shiki";
 import { createHighlighterCore, type HighlighterCore } from "shiki/core";
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript";
 import {
   type BundledLanguageName,
   bundledLanguages,
@@ -18,7 +18,17 @@ import {
 } from "./bundled-themes";
 import { loadLanguageFromCDN, loadThemeFromCDN } from "./cdn-loader";
 
-const jsEngine = createJavaScriptRegexEngine({ forgiving: true });
+// Lazy initialize JavaScript engine to avoid CSP issues
+let shikiEngine: ReturnType<typeof createJavaScriptRegexEngine> | null = null;
+
+// Function to get or initialize the engine
+function getEngine() {
+  if (!shikiEngine) {
+    // Use JavaScript engine instead of Oniguruma to avoid CSP issues with WASM
+    shikiEngine = createJavaScriptRegexEngine();
+  }
+  return shikiEngine;
+}
 
 // Singleton cache for highlighters
 const highlighterCache = new Map<string, Promise<HighlighterCore>>();
@@ -65,9 +75,9 @@ async function loadTheme(themeName: string, cdnUrl?: string | null) {
 
   // Fall back to github-light or github-dark if CDN load fails
   console.warn(
-    `[Streamdown] Theme "${themeName}" not found. Falling back to ${themeName.includes("dark") ? "github-dark" : "github-light"}.`
+    `[Streamdown] Theme "${themeName}" not found. Falling back to ${(themeName as string).includes("dark") ? "github-dark" : "github-light"}.`
   );
-  return themeName.includes("dark")
+  return (themeName as string).includes("dark")
     ? bundledThemes["github-dark"]
     : bundledThemes["github-light"];
 }
@@ -131,10 +141,13 @@ export const createShiki = (
       shikiTheme.map((theme) => loadTheme(theme, cdnUrl))
     );
 
+    // Get or initialize the JavaScript engine
+    const engine = getEngine();
+
     const highlighter = await createHighlighterCore({
       themes: themeRegistrations,
-      langs,
-      engine: jsEngine,
+      langs: langs as any,
+      engine,
     });
 
     return highlighter;
